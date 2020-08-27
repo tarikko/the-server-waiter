@@ -3,7 +3,6 @@ import sys
 import os
 import time
 import random
-import redis
 from PIL import Image, ImageDraw, ImageFont
 import io
 import discord
