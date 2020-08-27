@@ -9,8 +9,8 @@ import discord
 from discord.ext import tasks, commands
 from discord import File
 import asyncio
-from unidecode import unidecode
-import unicodedata
+#from unidecode import unidecode
+#import unicodedata
 
 TOKEN = 'NzM1NDkzNjkzMTk2MjA2MDgy.XxhD4Q.YLGhN7Cjxm6M5y5OyM3wmvrER7w'
 GUILD = 'Freework'
