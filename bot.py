@@ -40,9 +40,9 @@ async def on_ready():
         channel = bot.get_channel(737992023184900197)
         await channel.edit(name = f'Total members : {guild.member_count}')
         await bot.change_presence(activity=discord.Game(name=">help"))
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
         await bot.change_presence(activity=discord.Game(name=">documentation"))
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
 
     #async for entry in guild.audit_logs(limit=100):
