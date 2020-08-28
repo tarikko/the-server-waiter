@@ -34,15 +34,15 @@ async def on_ready():
     #print(unicodedata.normalize('NFKC', f"{members}"))
 
     while True :
-        await bot.change_presence(activity=discord.Game(name=">help"))
-        await asyncio.sleep(1)
-        await bot.change_presence(activity=discord.Game(name=">documentation"))
-        await asyncio.sleep(1)
         for guild in bot.guilds:
             if guild.name == GUILD:
                 break
         channel = bot.get_channel(737992023184900197)
         await channel.edit(name = f'Total members : {guild.member_count}')
+        await bot.change_presence(activity=discord.Game(name=">help"))
+        await asyncio.sleep(1)
+        await bot.change_presence(activity=discord.Game(name=">documentation"))
+        await asyncio.sleep(1)
 
 
     #async for entry in guild.audit_logs(limit=100):
