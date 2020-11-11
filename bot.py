@@ -3,7 +3,6 @@ import sys
 import os
 import time
 import random
-import redis
 from PIL import Image, ImageDraw, ImageFont
 import io
 import discord
@@ -13,12 +12,11 @@ import asyncio
 from datetime import datetime, timedelta
 from pytz import timezone, country_timezones
 import pytz
-from tinydb import TinyDB, Query
 import json
 #from unidecode import unidecode
 #import unicodedata
 
-TOKEN = 'Your token here'
+TOKEN = 'Your token'
 GUILD = 'Freework'
 
 bot = discord.Client()
@@ -66,42 +64,57 @@ async def on_message(message):
     if message.content.startswith('make coffee'):
         await message.channel.send('here is your coffee :coffee: !')
    
-    bad_words = ["anal", "banus", "barse", "ass", "b00b", "b0ll0ck", "b0ll0k", "b0ner", "b1atch", "b1tch", "balls", "ballsack", "bastard", "biatch", "bitch", "bl0w j0b", "bl0wj0b", "blow" , "blowjob", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt", "buttplug", "c00n", "c0ck", "cl1t0r1s", "cl1tor1s", "clit0ris", "clitoris",  "cock", "coon", "crap", "cunt", "d1ck", "d1ld0", "d1ldo", "damn", "dick", "dild0", "dildo", "d1psh1t", "dipsh1t", "dipshit", "dyke", "f u c k", "fag", "fart", "feck", "felch1ng", "felching",  "fellat10", "fellat1o", "fellate", "fellati0", "fellatio", "flange", "fuck", "fudge", "packer", "fudgepacker", "g0d damn", "g0ddamn", "god damn",  "goddamn",  "h0m0", "homo",  "j1zz",  "jerk",  "jizz",  "kn0b end",  "kn0bend",  "knob end",  "knobend",  "lab1a",  "labia",  "muff",  "n1gga",  "n1gger",  "nigga",  "nigger",  "p00p",  "p1ss",  "pen1s",  "penis",  "piss",  "poop", "prick",  "pube",  "pussy",  "queer",  "s h1t",  "s hit",  "scr0tum",  "scrotum",  "sh1t",  "shit",  "slut",  "smegma",  "spunk",  "t0sser",  "t1t",  "tit",  "tosser",  "turd",  "twat",  "vag1na",  "vagina",  "wank",  "wh0re",  "whore"]
+    bad_words = ["anal", "banus", "barse", "ass", "b00b", "b0ll0ck", "b0ll0k", "b0ner", "b1atch", "b1tch", "balls", "ballsack", "bastard", "biatch", "bitch", "bl0w j0b", "bl0wj0b", "blow" , "blowjob", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt", "buttplug", "c00n", "c0ck", "cl1t0r1s", "cl1tor1s", "clit0ris", "clitoris", "cock", "coon", "crap", "cunt", "d1ck", "d1ld0", "d1ldo", "damn", "dick", "dild0", "dildo", "d1psh1t", "dipsh1t", "dipshit", "dyke", "fag", "fart", "feck", "felch1ng", "felching",  "fellat10", "fellat1o", "fellate", "fellati0", "fellatio", "flange", "fuck", "fudge", "packer", "fudgepacker", "g0d damn", "g0ddamn", "god", "damn",  "goddamn",  "h0m0", "homo",  "j1zz",  "jerk",  "jizz",  "kn0b",  "kn0bend",  "knobend",  "lab1a",  "labia",  "muff",  "n1gga",  "n1gger",  "nigga",  "nigger",  "p00p",  "p1ss",  "pen1s",  "penis",  "piss",  "poop", "prick",  "pube",  "pussy",  "queer",  "s h1t",  "s hit",  "scr0tum",  "scrotum",  "sh1t",  "shit",  "slut",  "smegma",  "spunk",  "t0sser",  "t1t",  "tit",  "tosser",  "turd",  "twat",  "vag1na",  "vagina",  "wank",  "wh0re",  "whore"]
 
-    for word in bad_words:
-        if message.content.count(word) > 0:
-            await message.channel.purge(limit=1)
-            await message.channel.send(f'（╬ಠ益ಠ) {message.author.mention} Saying ***BAD*** words like ||`**{word}**`|| is against the rules !')
+    words = message.content.split()
+    words_count = len(words)
+
+    for word in bad_words :
+        for x in range(words_count) : 
+            if words[x] == word :
+                await message.channel.purge(limit=1)
+                await message.channel.send(f'（╬ಠ益ಠ) {message.author.mention} Saying ***BAD*** words like ||`{word}`|| is against the rules !')
 
     await bot.process_commands(message)
     
 
-@bot.command()
-async def ping(ctx):
-    await ctx.channel.send('{0}S'.format(round(bot.latency, 1)))
+'''@bot.command()
+    async def ping(ctx):
+await ctx.channel.send('{0}S'.format(round(bot.latency, 1)))'''
+
+'''@bot.command()
+async def test(ctx, *args):
+
+    for member in ctx.message.mentions:
+        await ctx.send(f'{member.mention}')'''
 
 @bot.command()
 async def add_text_channel(ctx, name: str, person: discord.Member):
+    for guild in bot.guilds:
+        if guild.name == GUILD:
+            break
+
     create = bot.get_channel(736612058480508998)
     if ctx.channel == create :
+        member_role = guild.get_role(736305813294940231)
         seconds = 3600
         time_m = seconds / 60
         time_h = time_m / 60
         category_name = 'personal-channels'
         category = discord.utils.get(ctx.guild.categories, name=category_name)
         personal_channel = await ctx.guild.create_text_channel(f'{name}', category=category) 
-        await personal_channel.set_permissions(person, read_messages=True, send_messages=True)
+        overwrite = discord.PermissionOverwrite()
+        overwrite.send_messages = True
+        overwrite.read_messages = True
+        await personal_channel.set_permissions(person, overwrite=overwrite)
+        await personal_channel.set_permissions(member_role, read_messages=False)
         await ctx.send('Channel created !')
-        if time_h == 1 :
-            await ctx.send('This channel will be deleted in 1 hour !')
-            await time.sleep(3600)
-            await personal_channel.delete()
-            await ctx.send(f'The channel with the ID \" {personal_channel.id} \" has been deleted')
-        else:
-            await ctx.send(f'This channel will be deleted in {time_h} hours !')
-            await time.sleep(seconds)
-            await personal_channel.delete()
-            await ctx.send(f'The channel with the ID \" {personal_channel.id} \" has been deleted')
+        time = await personal_channel.send('[time]')
+        for i in range(seconds, 0, -1) :
+            if i == 1 :
+                await personal_channel.delete()
+            else :
+                await time.edit(content='This channel will be deleted in ' + str(i) + ' seconds or ' + str(round(i / 3600, 1)) + ' hours.') 
     else:
         await ctx.channel.send(f'To use this command, You need to write it in {create.mention}')
 
@@ -117,20 +130,35 @@ async def add_voice_channel(ctx, name: str, person: discord.Member):
         personal_channel = await ctx.guild.create_voice_channel(f'{name}', category=category) 
         await personal_channel.set_permissions(person, read_messages=True, send_messages=True)
         await ctx.send('Channel created !')
-        if time_h == 1 :
-            await ctx.send('This channel will be deleted in 1 hour !')
-            await time.sleep(seconds)
-            await personal_channel.delete()
-            await ctx.send(f'The channel with the ID \" {personal_channel.id} \" has been deleted')
-        else:
-            await ctx.send(f'This channel will be deleted in {time_h} hours !')
-            await time.sleep(seconds)
-            await personal_channel.delete()
-            await ctx.send(f'The channel with the ID \" {personal_channel.id} \" has been deleted')
+        for i in range(seconds, 0, -1) :
+            if i == 1 :
+                await personal_channel.delete()
+            else :
+                await time.edit(content='This channel will be deleted in ' + str(i) + ' seconds or ' + str(i / 3600) + ' hours.') 
     else:
         await ctx.channel.send(f'To use this command, You need to write it in {create.mention}')
 
-#TODO: Complete this command (request)
+'''@bot.command()
+async def remove_text_channel(ctx, channel: discord.TextChannel):
+    create = bot.get_channel(736612058480508998)
+    if ctx.channel == request_channel :
+        channel_name = channel.name
+        await ctx.send(f" \'{channel_name}\' is being deleted .....")
+        await channel.delete()
+        await ctx.send("Successfully deleted !")
+    else:
+        await ctx.channel.send(f'To use this command, You need to write it in {create.mention}')
+
+@bot.command()
+async def remove_voice_channel(ctx, channel: discord.VoiceChannel):
+    create = bot.get_channel(736612058480508998)
+    if ctx.channel == request_channel :
+        channel_name = channel.name
+        await ctx.send(f" \'{channel_name}\' is being deleted .....")
+        await channel.delete()
+        await ctx.send("Successfully deleted !")
+    else:
+        await ctx.channel.send(f'To use this command, You need to write it in {create.mention}')'''
 @bot.command()
 async def request(ctx):
     await ctx.send("*** Please type the title for your request :***")
@@ -151,18 +179,12 @@ async def request(ctx):
         return MC.content
     check_skip = await bot.wait_for("message", check=check)
     if check_skip.content == "skip" :
-        db = TinyDB('DB/db.json')
-        request_author = ctx.message.author
-        request_author_id = ctx.message.author.id
-        User = Query()
-        check_user = db.search(User.id == request_author_id)
-
         channel = bot.get_channel(735222904530141244)
         embed = discord.Embed(title =  title.content, description = 'Request by ' + ctx.message.author.mention + '\n' + content.content + "\nFreelancers needed are : " + mentions.content, color = 0x000000)
         message_embed = await channel.send(embed=embed)
         await message_embed.add_reaction('✅')
         DM = await ctx.message.author.create_dm()
-        await DM.send("Hey there ! your request id is `" + str(message_embed.id) + "`" + "\n" + "To see the freelancer who want to work for you type \"`>freelancers_list <your request id>`\"\nTo delete your request type \"`>delete_request <your request id>`\"")
+        await DM.send("Hey there ! your request id is `" + str(message_embed.id) + "`" + "\n" + "To see the freelancers who want to work for you type \"`>freelancers_list " + str(message_embed.id) + " `\"\nTo delete your request send a message to <@449327117885505550>")
     else :
         request_color_1 = check_skip.content.replace("#", "0x")
         request_color_2 = int(request_color_1, 16)
@@ -171,7 +193,7 @@ async def request(ctx):
         message_embed = await channel.send(embed=embed)
         await message_embed.add_reaction('✅')
         DM = await ctx.message.author.create_dm()
-        await DM.send("Hey there ! your request id is `" + str(message_embed.id) + "`" + "\n" + "To see the freelancers who want to work for you type \"`>freelancers_list <your request id>`\"\nTo delete your request type \"`>delete_request <your request id>`\"")
+        await DM.send("Hey there ! your request id is `" + str(message_embed.id) + "`" + "\n" + "To see the freelancers who want to work for you type \"`>freelancers_list " + str(message_embed.id) + " `\"\nTo delete your request send a message to <@449327117885505550>")
 
 @bot.command()
 async def time(ctx, type: str, time: str = None):
@@ -198,10 +220,8 @@ async def time(ctx, type: str, time: str = None):
 async def freelancers_list(ctx, id: int):
     channel_name = bot.get_channel(735222904530141244)
     msg = await channel_name.fetch_message(id)
-    # await ctx.channel.send(msg.reactions[0])
     reaction = msg.reactions[0]
     users = await reaction.users().flatten()
-    # people_who_reacted = users[0].mention
     the_manager_id = '<@449327117885505550>'
     DM = await ctx.message.author.create_dm()
     await DM.send("The users who want to work for you are : ")
@@ -210,8 +230,7 @@ async def freelancers_list(ctx, id: int):
     await DM.send( "\nRequest ID : " + str(id) + "\nFor hireing the freelancers DM them or talk with them on a private channel in the server \nFor help, just DM " + str(the_manager_id) + " or ping him in the server to talk to him.\nRequest preview : ")
     await DM.send(embed=msg.embeds[0])
 
-#TODO: Complete this command (delete_request)
-@bot.command()
+'''@bot.command()
 async def delete_request(ctx, id: int):
     db = TinyDB('DB/db.json')
     request_author = ctx.message.author
@@ -227,17 +246,18 @@ async def delete_request(ctx, id: int):
     else:
         await ctx.channel.send('This user ***does*** exist in the database')
         await ctx.channel.send('User requests : ' + check_requests)
-    '''channel_name = bot.get_channel(735222904530141244)
+        channel_name = bot.get_channel(735222904530141244)
     msg = await channel_name.fetch_message(id)
     await msg.delete()
     await ctx.channel.send('Request deleted !')'''
+    #just ask the manager to delete your request, the next update we'll fix this issue
 
 @bot.command()
 async def colors(ctx):
     embed = discord.Embed(title = "Some nice colors :", description = "#b62828 \n #d57211 \n #ffce00 \n #ffee2d \n #36395a \n ***For reviewing the colors type \'>review_color\' and type the hex code*** \n EX : >review_color #d57211 \n for more hex colors check out : https://www.w3schools.com/Colors/colors_picker.asp", color = 0xb62828)
     await ctx.send(embed=embed)
 
-@bot.command()
+'''@bot.command()
 async def profile(ctx, value:str):
     db = TinyDB('DB/db.json')
     db.insert({'user': 1, 'char': value})
@@ -247,7 +267,7 @@ async def profile(ctx, value:str):
     string_result = json.dumps(json_result) 
     await ctx.channel.send(string_result)
     r = json_result[0]
-    await ctx.channel.send(r["user"])
+    await ctx.channel.send(r["user"])'''
 
 @bot.command(name='review_color')
 async def review_color(ctx, color: str):
@@ -273,7 +293,7 @@ async def review_color(ctx, color: str):
     buffer.seek(0)
 
     await ctx.send(file=File(buffer, 'myimage.png'))
-#TODO: Complete the command (commands) and (documentation)
+
 @bot.command()
 async def commands(ctx):
     id = '<@449327117885505550>'
@@ -283,7 +303,7 @@ async def commands(ctx):
 @bot.command()
 async def documentation(ctx):
     id = '<@449327117885505550>'
-    embed = discord.Embed(title = "INFO :", description = f"I am a bot created by {id} \n I manage this server and organise it \n If you want a bot like it just contact {id} in the DM or ping him in the chat \n ***The commands and their job : *** \n **>add_text_channel <name_of_the_channel> <person_1> <person_2>**\nadds a private text channel, you can allow users to enter your text channel by pinging them after you type the name of your channel\n **EX :** >add 1 2 \n **result :** 1 + 2 = 3 \n ¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤ \n **>substract** ----> substracts the first number by the second one \n **EX :** >substract 3 2 \n **result :** 3 - 2 = 1 \n  ¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤ \n **>devise** ----> devises the first number by the second one \n **EX :** >devise 2 2 \n **result :** 2 / 2 = 1 \n ", color = 0xDD4124)
+    embed = discord.Embed(title = "INFO :", description = f"I am a bot created by {id} \n I manage this server and organise it \n If you want a bot like it just contact {id} in the DM or ping him in the chat \n ***The commands and their job : *** \n ¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤ \n **>add_text_channel <channel name> <user>\nThis command adds a __text__ channel and makes the person that you mention and yourself the only user who can see and enter it.**", color = 0xDD4124)
     await ctx.send(embed=embed)
 '''@bot.command()
 async def help(ctx):
@@ -291,3 +311,15 @@ async def help(ctx):
     await ctx.send(embed=embed)'''
 
 bot.run(TOKEN)
+''' if message.content.startswith('add text channel'):
+        rand = random.randint(0, 100)
+        name = 'personal-channels'
+        category = discord.utils.get(guild.categories, name=name)
+        await guild.create_text_channel(f'general-channel-ID-{rand}', category=category)
+        await message.channel.send('channel created !') 
+    if message.content.startswith('add voice channel'):
+        rand = random.randint(0, 100)
+        name = 'personal-channels'
+        category = discord.utils.get(guild.categories, name=name)
+        await guild.create_voice_channel(f'general-channel-ID-{rand}', category=category)
+        await message.channel.send('channel created !')'''
