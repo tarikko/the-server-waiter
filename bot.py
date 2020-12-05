@@ -16,7 +16,7 @@ import json
 #from unidecode import unidecode
 #import unicodedata
 
-TOKEN = 'Your token'
+TOKEN = 'Your Token :)'
 GUILD = 'Freework'
 
 bot = discord.Client()
@@ -120,21 +120,30 @@ async def add_text_channel(ctx, name: str, person: discord.Member):
 
 @bot.command()
 async def add_voice_channel(ctx, name: str, person: discord.Member):
+    for guild in bot.guilds:
+        if guild.name == GUILD:
+            break
+
     create = bot.get_channel(736612058480508998)
     if ctx.channel == create :
+        member_role = guild.get_role(736305813294940231)
         seconds = 3600
         time_m = seconds / 60
         time_h = time_m / 60
         category_name = 'personal-channels'
         category = discord.utils.get(ctx.guild.categories, name=category_name)
         personal_channel = await ctx.guild.create_voice_channel(f'{name}', category=category) 
-        await personal_channel.set_permissions(person, read_messages=True, send_messages=True)
+        overwrite = discord.PermissionOverwrite()
+        overwrite.view_channel = True
+        await personal_channel.set_permissions(person, overwrite=overwrite)
+        await personal_channel.set_permissions(member_role, view_channel=False)
         await ctx.send('Channel created !')
+        time = await ctx.channel.send('[time]')
         for i in range(seconds, 0, -1) :
             if i == 1 :
                 await personal_channel.delete()
             else :
-                await time.edit(content='This channel will be deleted in ' + str(i) + ' seconds or ' + str(i / 3600) + ' hours.') 
+                await time.edit(content='The voice channel with the name "' + name + '" will be deleted in ' + str(i) + ' seconds or ' + str(round(i / 3600, 1)) + ' hours.') 
     else:
         await ctx.channel.send(f'To use this command, You need to write it in {create.mention}')
 
@@ -159,6 +168,7 @@ async def remove_voice_channel(ctx, channel: discord.VoiceChannel):
         await ctx.send("Successfully deleted !")
     else:
         await ctx.channel.send(f'To use this command, You need to write it in {create.mention}')'''
+
 @bot.command()
 async def request(ctx):
     await ctx.send("*** Please type the title for your request :***")
@@ -297,29 +307,16 @@ async def review_color(ctx, color: str):
 @bot.command()
 async def commands(ctx):
     id = '<@449327117885505550>'
-    embed = discord.Embed(title = "INFO :", description = f"I am a bot created by {id} \n I manage this server and organise it \n If you want a bot like it just contact {id} in the DM or ping him in the chat \n ***The commands are : *** \n**>add_text_channel**\n**>add_voice_channel**\n**>request**\n**>freelancers_list**\n**>delete_request**\n**>colors**\n**>review_color**\n**>commands**\n**>documentation**", color = 0x00ff00)
+    embed = discord.Embed(title = "INFO :", description = f"I am a bot created by {id} \n I manage this server and organise it \n If you want a bot like it just contact {id} in the DM or ping him in the chat \n ***The commands are : *** \n**>add_text_channel**\n**>add_voice_channel**\n**>request**\n**>freelancers_list**\n**>colors**\n**>review_color**\n**>commands**\n**>documentation**", color = 0x00ff00)
     await ctx.send(embed=embed)
 
 @bot.command()
 async def documentation(ctx):
     id = '<@449327117885505550>'
-    embed = discord.Embed(title = "INFO :", description = f"I am a bot created by {id} \n I manage this server and organise it \n If you want a bot like it just contact {id} in the DM or ping him in the chat \n ***The commands and their job : *** \n ¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤¸¸.•´¯`•¸¸.•..>> ☵ <<..•.¸¸•´¯`•.¸¸¤ \n **>add_text_channel <channel name> <user>\nThis command adds a __text__ channel and makes the person that you mention and yourself the only user who can see and enter it.**", color = 0xDD4124)
+    embed = discord.Embed(title = "INFO :", description = f"I am a bot created by {id} \n I manage this server and organise it \n If you want a bot like it just contact {id} in the DM or ping him in the chat \n ***The commands and their job : *** \n ---------------------------------- \n **>add_text_channel <some_channel_channel_name> <user>\nThis command adds a __text__ channel and makes the person that you mention and yourself the only users who can see and use it.**\n ---------------------------------- \n **>add_voice_channel <some_channel_channel_name> <user>\nThis command adds a __voice__ channel and makes the person that you mention and yourself the only users who can see and use it.**\n ---------------------------------- \n **>request \nThis command adds your __request__ to the <#735222904530141244> channel.**\n ---------------------------------- \n **>freelancers_list <your_request_id>\nThis command displays the freelancers that want to work for you, to get your request id just right click on your request and click 'copy id'.**\n ---------------------------------- \n **>colors \nThis command displays some nice colors to choose from when making a request.**\n ---------------------------------- \n **>review_color <hex_color> \nThis command makes a preview of your hex color, example : >review_color #000000.**\n ---------------------------------- \n **>commands \nThis command displays all available commands.**\n ---------------------------------- \n **>documentation \nThis command displays all available commands and how to use them.**", color = 0xDD4124)
     await ctx.send(embed=embed)
-'''@bot.command()
-async def help(ctx):
-    embed = discord.Embed(title = "The bot commands are :", description = "- >add (first number) (second number) \n adds two numbers\n - >devise \n - >multiply \n - >substract \n - >add_custom_text_channel", color = 0xb62828)
-    await ctx.send(embed=embed)'''
 
 bot.run(TOKEN)
-''' if message.content.startswith('add text channel'):
-        rand = random.randint(0, 100)
-        name = 'personal-channels'
-        category = discord.utils.get(guild.categories, name=name)
-        await guild.create_text_channel(f'general-channel-ID-{rand}', category=category)
-        await message.channel.send('channel created !') 
-    if message.content.startswith('add voice channel'):
-        rand = random.randint(0, 100)
-        name = 'personal-channels'
-        category = discord.utils.get(guild.categories, name=name)
-        await guild.create_voice_channel(f'general-channel-ID-{rand}', category=category)
-        await message.channel.send('channel created !')'''
+
+#the commented lines are incomplete features, feel free to complete them and use tiny db
+#thank you :3
