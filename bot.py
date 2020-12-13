@@ -16,7 +16,10 @@ import json
 #from unidecode import unidecode
 #import unicodedata
 
-TOKEN = 'Your Token :)'
+with open('config.json', 'r') as d:
+    cfg = json.loads(d)
+
+TOKEN = cfg["token"] 
 GUILD = 'Freework'
 
 bot = discord.Client()
@@ -64,7 +67,7 @@ async def on_message(message):
     if message.content.startswith('make coffee'):
         await message.channel.send('here is your coffee :coffee: !')
    
-    bad_words = ["anal", "banus", "barse", "ass", "b00b", "b0ll0ck", "b0ll0k", "b0ner", "b1atch", "b1tch", "balls", "ballsack", "bastard", "biatch", "bitch", "bl0w j0b", "bl0wj0b", "blow" , "blowjob", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt", "buttplug", "c00n", "c0ck", "cl1t0r1s", "cl1tor1s", "clit0ris", "clitoris", "cock", "coon", "crap", "cunt", "d1ck", "d1ld0", "d1ldo", "damn", "dick", "dild0", "dildo", "d1psh1t", "dipsh1t", "dipshit", "dyke", "fag", "fart", "feck", "felch1ng", "felching",  "fellat10", "fellat1o", "fellate", "fellati0", "fellatio", "flange", "fuck", "fudge", "packer", "fudgepacker", "g0d damn", "g0ddamn", "god", "damn",  "goddamn",  "h0m0", "homo",  "j1zz",  "jerk",  "jizz",  "kn0b",  "kn0bend",  "knobend",  "lab1a",  "labia",  "muff",  "n1gga",  "n1gger",  "nigga",  "nigger",  "p00p",  "p1ss",  "pen1s",  "penis",  "piss",  "poop", "prick",  "pube",  "pussy",  "queer",  "s h1t",  "s hit",  "scr0tum",  "scrotum",  "sh1t",  "shit",  "slut",  "smegma",  "spunk",  "t0sser",  "t1t",  "tit",  "tosser",  "turd",  "twat",  "vag1na",  "vagina",  "wank",  "wh0re",  "whore"]
+    bad_words = cfg["bad-words"]
 
     words = message.content.split()
     words_count = len(words)
@@ -240,8 +243,9 @@ async def freelancers_list(ctx, id: int):
     await DM.send( "\nRequest ID : " + str(id) + "\nFor hireing the freelancers DM them or talk with them on a private channel in the server \nFor help, just DM " + str(the_manager_id) + " or ping him in the server to talk to him.\nRequest preview : ")
     await DM.send(embed=msg.embeds[0])
 
-'''@bot.command()
+@bot.command()
 async def delete_request(ctx, id: int):
+    '''
     db = TinyDB('DB/db.json')
     request_author = ctx.message.author
     request_author_id = ctx.message.author.id
@@ -260,7 +264,7 @@ async def delete_request(ctx, id: int):
     msg = await channel_name.fetch_message(id)
     await msg.delete()
     await ctx.channel.send('Request deleted !')'''
-    #just ask the manager to delete your request, the next update we'll fix this issue
+    ctx.channel.send('Command not implemented yet, in the meanwhile ask <@449327117885505550> to delete your request.')
 
 @bot.command()
 async def colors(ctx):
